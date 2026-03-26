@@ -1,0 +1,47 @@
+% Definición de la matriz de coeficientes A y el vector de términos independientes b
+A = [10, 2, -1; 
+    -3, -6, 2; 
+     1,  1, 5];
+
+b = [27; -61.5; -21.5];
+
+n = length(b);
+L = eye(n); % Matriz identidad para almacenar los multiplicadores (Descomposición LU)
+U = A;      % Inicializamos U como A para transformarla en triangular superior
+
+fprintf('--- Proceso de Eliminación de Gauss ---\n');
+
+% Fase de eliminación hacia adelante
+for k = 1:n-1
+    for i = k+1:n
+        % Calcular el multiplicador
+        factor = U(i,k) / U(k,k);
+        L(i,k) = factor;
+        
+        % Actualizar la fila en la matriz U
+        U(i,k:n) = U(i,k:n) - factor * U(k,k:n);
+        
+        % Actualizar el vector b (si se resuelve simultáneamente)
+        b(i) = b(i) - factor * b(k);
+    end
+end
+
+fprintf('Matriz Triangular Superior (U):\n');
+disp(U);
+
+fprintf('Vector b modificado:\n');
+disp(b);
+
+% Fase de sustitución hacia atrás
+x = zeros(n, 1);
+x(n) = b(n) / U(n,n);
+
+for i = n-1:-1:1
+    sum_val = U(i, i+1:n) * x(i+1:n);
+    x(i) = (b(i) - sum_val) / U(i,i);
+end
+
+fprintf('--- Solución del Sistema ---\n');
+fprintf('x1 = %.2f\n', x(1));
+fprintf('x2 = %.2f\n', x(2));
+fprintf('x3 = %.2f\n', x(3));
